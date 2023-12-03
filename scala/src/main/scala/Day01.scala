@@ -28,16 +28,14 @@ object Day01 {
 
     val matchPattern: Regex =
       mapper
-      .keys
-      .mkString("|")
-      .r
+        .keys
+        .mkString("|")
+        .r
 
     val matches: Iterator[String] =
       input
         .tails
-        .map(matchPattern.findPrefixOf)
-        .filter(_.nonEmpty)
-        .map(_.get)
+        .flatMap(matchPattern.findPrefixOf)
 
     val first = matches.next()
     var last = first
