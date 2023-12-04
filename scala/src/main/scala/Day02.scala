@@ -32,6 +32,13 @@ object Day02 {
         .map(_.isSubsetOf(bag))
         .forall(_ == true)
     }
+
+    def smallestBag: Set = Set(
+        blue=sets.map(_.blue).max,
+        red=sets.map(_.red).max,
+        green=sets.map(_.green).max
+      )
+
   }
   object Game {
     def apply(line: String): Game = {
@@ -50,8 +57,7 @@ object Day02 {
     }
   }
 
-
-  def partOne(): Int = {
+  def part1(): Int = {
     val input = Source.fromFile("inputs/Day02.input").getLines()
 
     val bag: Set = Set(red=12, green=13, blue=14)
@@ -61,11 +67,20 @@ object Day02 {
       .filter(_.bagCheck(bag))
       .map(_.id)
       .sum
+  }
 
+  def part2(): Int = {
+    val input = Source.fromFile("inputs/Day02.input").getLines()
+
+    input
+      .map(Game(_))
+      .map(_.smallestBag)
+      .map(s => s.blue * s.red * s.green)
+      .sum
   }
 
   def main(args: Array[String]): Unit = {
-    println("Part one: " + partOne())
+    println("Part one: " + part1())
+    println("Part two: " + part2())
   }
-
 }

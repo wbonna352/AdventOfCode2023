@@ -45,7 +45,7 @@ object Day01 {
 
   }
 
-  def partOne(): Int = {
+  def part1(): Int = {
     val input: Iterator[String] = Source.fromFile("inputs/Day01.input").getLines()
 
       input
@@ -53,7 +53,7 @@ object Day01 {
         .sum
   }
 
-  def partTwo(): Int = {
+  def part2(): Int = {
     val input: Iterator[String] = Source.fromFile("inputs/Day01.input").getLines()
 
       input
@@ -63,8 +63,8 @@ object Day01 {
 
 
   def main(args: Array[String]): Unit = {
-    println("Part one: " + partOne())
-    println("Part two: " + partTwo())
+    println("Part one: " + part1())
+    println("Part two: " + part2())
   }
 
 }
