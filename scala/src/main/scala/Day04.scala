@@ -45,6 +45,22 @@ object Day04 {
     runner(original, original)
   }
 
+  def countScratchcards(original: List[Card]): Int = {
+    @tailrec
+    def runner(acc: Int, toCopy: List[Card]): Int = {
+      val copies: List[Card] =
+        toCopy
+          .flatMap(_.copies)
+          .flatMap(id => original.filter(_.id == id))
+
+      if (copies.isEmpty) acc
+      else runner(acc + copies.length, copies)
+    }
+
+    runner(original.length, original)
+  }
+
+
   def part1(): Int = {
     val input = Source.fromFile("inputs/Day04.input").getLines()
 
@@ -61,8 +77,18 @@ object Day04 {
     scratchcards.length
   }
 
+  def part2_2(): Int = {
+    val input = Source.fromFile("inputs/Day04.input").getLines().toList
+    val originalCards: List[Card] = input.map(Card(_))
+
+    countScratchcards(originalCards)
+
+  }
+
+
   def main(args: Array[String]): Unit = {
     println("Part1: " + part1())
-    println("Part2: " + part2())
+    println("Part2: " + part2_2())
+
   }
 }
