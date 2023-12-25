@@ -54,15 +54,44 @@ object Day07 {
       .toList
   }
 
-  implicit val handOrdering: Ordering[Hand] = new Ordering[Hand] {
-    override def compare(x: Hand, y: Hand): Int = {
-      if (handToType(x).id == handToType(y).id) {
-        (x zip y).find(pair => pair._1 != pair._2) match {
-          case Some((a, b)) => a.id - b.id
-          case None => 0
-        }
+  val handOrdering: Ordering[Hand] = (x: Hand, y: Hand) => {
+    if (handToType(x).id == handToType(y).id) {
+      (x zip y).find(pair => pair._1 != pair._2) match {
+        case Some((a, b)) => a.id - b.id
+        case None => 0
       }
-      else handToType(x).id - handToType(y).id
+    }
+    else handToType(x).id - handToType(y).id
+  }
+
+  val jokerOrdering: Ordering[Hand] = (x: Hand, y: Hand) => {
+
+    val xType: HandType.Value = handToType(jokerBestReplace(x))
+    val yType: HandType.Value = handToType(jokerBestReplace(y))
+
+    if (xType.id == yType.id) {
+      (x zip y).find(pair => pair._1 != pair._2) match {
+        case Some((a, b)) =>
+          if (a == Card.J) -1
+          else if (b == Card.J) 1
+          else a.id - b.id
+        case None => 0
+      }
+    }
+    else xType.id - yType.id
+  }
+
+  def jokerBestReplace(hand: Hand): Hand = {
+    if (hand.count(_ == Card.J) == 5) hand
+    else {
+      val mode: Card.Value = {
+        hand.filter(_ != Card.J).groupBy(identity).view.mapValues(_.length).maxBy(_._2)._1
+      }
+
+      hand.map {
+        case Card.J => mode
+        case c => c
+      }
     }
   }
 
@@ -71,14 +100,27 @@ object Day07 {
 
     parse(input)
       .map(l => (l._1.toCharArray.map(charToCard), l._2))
-      .sortBy(_._1)
+      .sortBy(_._1)(handOrdering)
       .zipWithIndex
       .map(h => h._1._2 * (h._2 + 1))
       .sum
   }
 
+  def part2(): Int = {
+    val input = Source.fromFile("inputs/Day07.input").getLines()
+
+    parse(input)
+      .map(l => (l._1.toCharArray.map(charToCard), l._2))
+      .sortBy(_._1)(jokerOrdering)
+      .zipWithIndex
+      .map(h => h._1._2 * (h._2 + 1))
+      .sum
+
+  }
+
   def main(args: Array[String]): Unit = {
     println("Part1: " + part1())
+    println("Part2: " + part2())
   }
 
 }
