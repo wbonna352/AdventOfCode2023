@@ -3,17 +3,10 @@ import scala.io.Source
 
 object Day09 {
 
-  def calculate(input: Array[Int]): Int = {
-    if (input.length == 1) input.head
-    else {
-      input
-        .sliding(2)
-        .map(pair => pair.last - pair.head)
-        .toArray
-    }
+  def calculateRows(row: Array[Int]): Array[Array[Int]] = {
 
     @tailrec
-    def calculateRows(rows: Array[Array[Int]]): Array[Array[Int]] = {
+    def run(rows: Array[Array[Int]]): Array[Array[Int]] = {
       if ((rows.last.length == 1) || !rows.last.exists(_ != 0)) rows
       else {
         val nextRow: Array[Int] =
@@ -22,14 +15,21 @@ object Day09 {
             .map(pair => pair.last - pair.head)
             .toArray
 
-        calculateRows(rows :+ nextRow)
+        run(rows :+ nextRow)
       }
     }
+    run(Array(row))
+  }
 
-    val rows: Array[Array[Int]] = calculateRows(Array(input))
 
-    rows
+  def calculateFromRight(input: Array[Int]): Int = {
+    calculateRows(input)
       .foldRight(0)((row: Array[Int], currVal: Int) => row.last + currVal)
+  }
+
+  def calculateFromLeft(input: Array[Int]): Int = {
+    calculateRows(input)
+      .foldRight(0)((row: Array[Int], currVal: Int) => row.head - currVal)
   }
 
   def part1: Int = {
@@ -37,12 +37,22 @@ object Day09 {
 
     input
       .map(_.split(" ").map(_.toInt))
-      .map(calculate)
+      .map(calculateFromRight)
+      .sum
+  }
+
+  def part2: Int = {
+    val input: Iterator[String] = Source.fromFile("inputs/Day09.input").getLines()
+
+    input
+      .map(_.split(" ").map(_.toInt))
+      .map(calculateFromLeft)
       .sum
   }
 
   def main(args: Array[String]): Unit = {
     println("Part1: " + part1)
+    println("Part2: " + part2)
 
   }
 }
